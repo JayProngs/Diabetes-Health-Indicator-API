@@ -51,7 +51,7 @@ library(ggcorrplot)
 
 ```{r}
 # Import the dataset
-data <- read_csv("diabetes_binary_health_indicators_BRFSS2015.csv", delim=",")
+data <- read_csv("diabetes_binary_health_indicators_BRFSS2015.csv")
 ```
 
 ```{r}

@@ -1,0 +1,356 @@
+---
+title: "Modelling"
+author: "Jay Thakur"
+format: html
+editor: visual
+editor_options: 
+  chunk_output_type: console
+---
+
+
+
+# Introduction
+
+In this analysis, we aim to develop predictive models to classify individuals as diabetic or non-diabetic based on various health indicators from the **Diabetes Health Indicators Dataset**. Using the **tidymodels** framework in R, we will build and evaluate two types of models:
+
+- **Classification Tree**
+- **Random Forest**
+
+Our objective is to select the best-performing model based on the **log-loss** metric, using 5-fold cross-validation on the training data. We will then compare the selected models on a test dataset to determine the overall winner.
+
+# Data Preparation
+
+## Loading Libraries
+
+
+
+```{r}
+# Load necessary libraries
+library(tidyverse)
+library(tidymodels)
+library(rpart.plot)
+```
+
+
+
+## Data preprocessing
+
+
+
+```{r}
+# Import the dataset
+data <- read_csv("diabetes_binary_health_indicators_BRFSS2015.csv")
+
+# Convert binary variables to factors with labels
+data <- data %>%
+  mutate(
+    Diabetes_binary = factor(Diabetes_binary, labels = c("No", "Yes")),
+    HighBP = factor(HighBP, labels = c("No", "Yes")),
+    HighChol = factor(HighChol, labels = c("No", "Yes")),
+    CholCheck = factor(CholCheck, labels = c("No", "Yes")),
+    Smoker = factor(Smoker, labels = c("No", "Yes")),
+    Stroke = factor(Stroke, labels = c("No", "Yes")),
+    HeartDiseaseorAttack = factor(HeartDiseaseorAttack, labels = c("No", "Yes")),
+    PhysActivity = factor(PhysActivity, labels = c("No", "Yes")),
+    Fruits = factor(Fruits, labels = c("No", "Yes")),
+    Veggies = factor(Veggies, labels = c("No", "Yes")),
+    HvyAlcoholConsump = factor(HvyAlcoholConsump, labels = c("No", "Yes")),
+    AnyHealthcare = factor(AnyHealthcare, labels = c("No", "Yes")),
+    NoDocbcCost = factor(NoDocbcCost, labels = c("No", "Yes")),
+    DiffWalk = factor(DiffWalk, labels = c("No", "Yes")),
+    Sex = factor(Sex, labels = c("Female", "Male"))
+  ) %>%
+  mutate(
+    GenHlth = factor(GenHlth, ordered = TRUE, levels = c(1, 2, 3, 4, 5),
+                     labels = c("Excellent", "Very Good", "Good", "Fair", "Poor")),
+    Age = factor(Age, ordered = TRUE, levels = 1:13,
+                 labels = c("18–24", "25–29", "30–34", "35–39", "40–44", "45–49", "50–54",
+                            "55–59", "60–64", "65–69", "70–74", "75–79", "80 or older")),
+    Education = factor(Education, ordered = TRUE, levels = 1:6,
+                       labels = c("No schooling", "Elementary", "Some high school",
+                                  "High school graduate", "Some college", "College graduate")),
+    Income = factor(Income, ordered = TRUE, levels = 1:8,
+                    labels = c("<$10,000", "$10,000–$15,000", "$15,000–$20,000",
+                               "$20,000–$25,000", "$25,000–$35,000", "$35,000–$50,000",
+                               "$50,000–$75,000", "≥$75,000"))
+  )
+```
+
+
+
+## Data Splitting
+
+
+
+```{r}
+# Set seed for reproducibility
+set.seed(123)
+
+# Split the data
+data_split <- initial_split(data, prop = 0.7, strata = Diabetes_binary)
+train_data <- training(data_split)
+test_data <- testing(data_split)
+```
+
+
+
+## Classification Tree Model
+
+
+
+```{r}
+# Define the model
+tree_spec <- decision_tree(
+  cost_complexity = tune(),
+  tree_depth = NULL,
+  min_n = NULL
+) %>%
+  set_engine("rpart") %>%
+  set_mode("classification")
+
+# Define the recipe
+tree_recipe <- recipe(Diabetes_binary ~ BMI + Age + HighBP + PhysActivity + GenHlth, data = train_data) %>%
+  step_dummy(all_nominal_predictors())
+```
+
+
+
+### Cross validsation
+
+
+```{r}
+# Create cross-validation folds
+set.seed(123)
+tree_folds <- vfold_cv(train_data, v = 5, strata = Diabetes_binary)
+
+# Create the workflow
+tree_workflow <- workflow() %>%
+  add_model(tree_spec) %>%
+  add_recipe(tree_recipe)
+
+# Define the grid
+tree_grid <- grid_regular(cost_complexity(range = c(-4, -1)), levels = 10)
+```
+
+
+
+### Training And Tuning
+
+
+
+```{r}
+# Define metrics
+tree_metrics <- metric_set(mn_log_loss)
+
+# Tune the model
+set.seed(123)
+tree_tuned <- tune_grid(
+  tree_workflow,
+  resamples = tree_folds,
+  grid = tree_grid,
+  metrics = tree_metrics
+)
+```
+
+
+
+### Results
+
+
+```{r}
+# Collect metrics
+tree_results <- tree_tuned %>%
+  collect_metrics()
+
+# Find the best hyperparameter
+best_tree <- tree_tuned %>%
+  select_best(metric = "mn_log_loss")
+
+
+best_tree
+```
+
+
+
+### Final Model
+
+
+
+```{r}
+# Finalize the workflow
+final_tree_workflow <- tree_workflow %>%
+  finalize_workflow(best_tree)
+
+# Fit the final model
+final_tree_fit <- final_tree_workflow %>%
+  fit(data = train_data)
+```
+
+
+
+### Tree Visualization
+
+
+```{r}
+# Plot the decision tree
+# str(final_tree_fit)
+rpart.plot(extract_fit_parsnip(final_tree_fit)$fit)
+```
+
+
+
+## Random Forest Model
+
+
+
+```{r}
+# Define the model
+rf_spec <- rand_forest(
+  mtry = tune(),
+  trees = 500,
+  min_n = NULL
+) %>%
+  set_engine("ranger", importance = "impurity") %>%
+  set_mode("classification")
+```
+
+```{r}
+# Create the workflow
+rf_workflow <- workflow() %>%
+  add_model(rf_spec) %>%
+  add_recipe(tree_recipe)
+
+# Define the grid
+rf_grid <- grid_regular(mtry(range = c(1, 5)), levels = 5)
+
+# Tune the model
+set.seed(123)
+rf_tuned <- tune_grid(
+  rf_workflow,
+  resamples = tree_folds,
+  grid = rf_grid,
+  metrics = tree_metrics
+)
+```
+
+```{r}
+# Collect metrics
+rf_results <- rf_tuned %>%
+  collect_metrics()
+
+# Find the best hyperparameter
+best_rf <- rf_tuned %>%
+  select_best(metric = "mn_log_loss")
+
+best_rf
+```
+
+
+
+### Final RF model
+
+
+
+```{r}
+# Finalize the workflow
+final_rf_workflow <- rf_workflow %>%
+  finalize_workflow(best_rf)
+
+# Fit the final model
+final_rf_fit <- final_rf_workflow %>%
+  fit(data = train_data)
+
+```
+
+
+
+### Feature Importance
+
+
+```{r}
+# Extract variable importance
+rf_importance <- final_rf_fit %>%
+  extract_fit_parsnip() %>%
+  vip::vip()
+
+# Plot variable importance
+rf_importance
+```
+
+
+
+## Model Evaluation on Test Data
+
+### Classification Tree
+
+
+
+```{r}
+# Predict probabilities
+tree_probs <- predict(final_tree_fit, test_data, type = "prob")
+
+# Combine the truth labels with the predicted probabilities
+tree_results <- tree_probs %>%
+  bind_cols(truth = test_data$Diabetes_binary)
+
+# Ensure 'truth' is a factor with levels matching the predicted probabilities
+tree_results <- tree_results %>%
+  mutate(truth = factor(truth, levels = c("No", "Yes")))
+
+# Calculate log-loss using only the probabilities for the 'Yes' class
+tree_log_loss <- mn_log_loss(tree_results, truth = truth, .pred_Yes, event_level = "second")
+
+# Display the log-loss
+tree_log_loss
+
+
+```
+
+
+
+### Random Forest
+
+
+
+```{r}
+# Predict probabilities
+rf_probs <- predict(final_rf_fit, test_data, type = "prob")
+
+# Combine the truth labels with the predicted probabilities
+rf_results <- rf_probs %>%
+  bind_cols(truth = test_data$Diabetes_binary)
+
+# Ensure 'truth' is a factor with levels matching the predicted probabilities
+rf_results <- rf_results %>%
+  mutate(truth = factor(truth, levels = c("No", "Yes")))
+
+# Calculate log-loss using only the probabilities for the 'Yes' class
+rf_log_loss <- mn_log_loss(rf_results, truth = truth, .pred_Yes, event_level = "second")
+
+# Display the log-loss
+rf_log_loss
+
+```
+
+
+
+### Comparison
+
+
+
+```{r}
+# Create a tibble for comparison
+model_performance <- tibble(
+  Model = c("Classification Tree", "Random Forest"),
+  Log_Loss = c(tree_log_loss$.estimate, rf_log_loss$.estimate)
+)
+
+model_performance
+
+```
+
+
+
+## Conclusion
+
+Based on log-loss metric calculation, Random forest model outperforms the classification tree model on the test dataset. This model will be selected as the final model for deployment.
