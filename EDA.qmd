@@ -42,7 +42,6 @@ The **Diabetes Health Indicators Dataset** is derived from the Behavioral Risk F
 
 We begin by loading the necessary libraries and importing the dataset using a relative path.
 ```{r}
-# Load necessary libraries
 library(tidyverse)
 library(ggplot2)
 library(ggcorrplot)
@@ -50,22 +49,18 @@ library(ggcorrplot)
 
 
 ```{r}
-# Import the dataset
 data <- read_csv("diabetes_binary_health_indicators_BRFSS2015.csv")
 ```
 
 ```{r}
-# View the structure of the dataset
 str(data)
-
-# Summary statistics
 summary(data)
 ```
 
 # Coverting columns to Factor
 
 ```{r}
-# Convert binary variables to factors with labels
+# Convert variables to factors with labels
 data <- data %>%
   mutate(
     Diabetes_binary = factor(Diabetes_binary, labels = c("No", "Yes")),
@@ -85,7 +80,7 @@ data <- data %>%
     Sex = factor(Sex, labels = c("Female", "Male"))
   )
 
-# Convert ordinal variables to ordered factors
+# Convert ordered variables to ordered factors
 data <- data %>%
   mutate(
     GenHlth = factor(GenHlth, ordered = TRUE, levels = c(1, 2, 3, 4, 5),
@@ -167,7 +162,7 @@ ggplot(data, aes(x = Smoker, fill = Diabetes_binary)) +
 
 ## General health status and Diabetes
 ```{r}
-# Proportion of diabetes across general health status
+# Plot of diabetes across general health status
 ggplot(data, aes(x = GenHlth, fill = Diabetes_binary)) +
   geom_bar(position = "fill") +
   labs(title = "Diabetes Prevalence by General Health Status", x = "General Health", y = "Proportion") +

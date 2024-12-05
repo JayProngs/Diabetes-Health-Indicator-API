@@ -148,8 +148,6 @@ function(HighBP = "Yes",
       ordered = TRUE
     )
   )
-  
-  # Use the trained recipe to transform the input data
   # baked_data <- bake(prepped_recipe, new_data = input_data)
   
   # Predict probabilities using the fitted model and return
@@ -183,7 +181,7 @@ function() {
 }
 
 
-# Example API calls:
-# http://localhost:8000/pred?HighBP=Yes&BMI=32&PhysActivity=No&GenHlth=Fair&Age=60-64
-# http://localhost:8000/pred?HighBP=No&BMI=22&PhysActivity=Yes&GenHlth=Excellent&Age=25-29
-# http://localhost:8000/pred?HighBP=Yes&BMI=30&PhysActivity=No&GenHlth=Poor&Age=70-74
+# Three examples of API calls:
+# http://127.0.0.1:8000/pred?HighBP=Yes&BMI=32&PhysActivity=No&GenHlth=Fair&Age=60-64
+# http://127.0.0.1:8000/pred?HighBP=No&BMI=22&PhysActivity=Yes&GenHlth=Excellent&Age=25-29
+# http://127.0.0.1:8000/pred?HighBP=Yes&BMI=30&PhysActivity=No&GenHlth=Poor&Age=70-74
