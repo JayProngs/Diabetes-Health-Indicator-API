@@ -184,7 +184,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 ✖ dplyr::lag()      masks stats::lag()
 ✖ yardstick::spec() masks readr::spec()
 ✖ recipes::step()   masks stats::step()
-• Use tidymodels_prefer() to resolve common conflicts.</code></pre>
+• Learn how to get started at https://www.tidymodels.org/start/</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rpart.plot)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
@@ -260,6 +260,17 @@ dbl (22): Diabetes_binary, HighBP, HighChol, CholCheck, BMI, Smoker, Stroke,...
 </section>
 <section id="classification-tree-model" class="level2">
 <h2 class="anchored" data-anchor-id="classification-tree-model">Classification Tree Model</h2>
+<p>A classification tree is a decision tree that is used for predicting categorical variables. It splits the data into subsets on the value of input features which result in a tree-like structure.Each node of the tree represents a feature, each branch represents a decision rule, and each leaf node represents an outcome.</p>
+<p><strong>Advantage:</strong></p>
+<ol type="1">
+<li><p>Easy to Use.</p></li>
+<li><p>No need for much preprocessing.</p></li>
+</ol>
+<p><strong>Disadvantage:</strong></p>
+<ol type="1">
+<li><p>can be overfitted.</p></li>
+<li><p>struggles with complex relationship between variable or multicollinearity.</p></li>
+</ol>
 <p>I am using five predictors, BMI, Age, Physical activity, High BP and General Health.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>tree_spec <span class="ot">&lt;-</span> <span class="fu">decision_tree</span>(</span>
@@ -356,6 +367,18 @@ To silence this warning:
 </section>
 <section id="random-forest-model" class="level2">
 <h2 class="anchored" data-anchor-id="random-forest-model">Random Forest Model</h2>
+<p>A random forest is a method which constructs multiple decision trees during training and outputs the mode of the classes (classification) of the individual trees. It introduces randomness by selecting random subsets of features and observations to build each tree.</p>
+<p>A random forest is basically a collection of classification trees. It reduces the variance by introducing randomness and averaging its prediction.</p>
+<p><strong>Advantages:</strong></p>
+<ol type="1">
+<li><p>can reduce overfitting due to randomness</p></li>
+<li><p>easy to handle large dataset</p></li>
+<li><p>provides feature importance</p></li>
+</ol>
+<p><strong>Disadvantage:</strong></p>
+<ol type="1">
+<li>computation cost and memory usage can be more than classification tree</li>
+</ol>
 <p>On same training dataset, I will be using random forest model.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>rf_spec <span class="ot">&lt;-</span> <span class="fu">rand_forest</span>(</span>
