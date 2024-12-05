@@ -219,4 +219,4 @@ cor_matrix <- cor(numeric_vars)
 ggcorrplot(cor_matrix, lab = TRUE)
 ```
 
-[Click here for the Modeling Page](Modeling.html)
+[Click here for the Modeling Page](Modelling.html)
