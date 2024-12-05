@@ -162,7 +162,7 @@ function(HighBP = "Yes",
 #' Provide information about the API
 #' @get /info
 function() {
-  list(name = "Jay", github_pages_url = "https://github.com/JayProngs/Diabetes-Health-Indicator-API/EDA.html")
+  list(name = "Jay", github_pages_url = "https://jayprongs.github.io/Diabetes-Health-Indicator-API/EDA.html")
 }
 
 #' Plot the confusion matrix of the model
