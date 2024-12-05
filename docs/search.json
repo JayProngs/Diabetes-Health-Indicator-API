@@ -1,0 +1,72 @@
+[
+  {
+    "objectID": "EDA.html",
+    "href": "EDA.html",
+    "title": "EDA",
+    "section": "",
+    "text": "The Diabetes Health Indicators Dataset is derived from the Behavioral Risk Factor Surveillance System (BRFSS) 2015 survey. It includes different health-related variables collected from adults in the USA. The dataset is useful for analyzing factors that may indicate diabetes among the population.\nPurpose of EDA: The primary goal of this exploratory data analysis is to understand the relationships between different health indicators and the presence of diabetes. By examining patterns and correlations in the data, we aim to identify key predictors that can be used in a predictive modeling to classify individuals as diabetic or non-diabetic."
+  },
+  {
+    "objectID": "EDA.html#number-of-individuals-with-and-without-diabetes",
+    "href": "EDA.html#number-of-individuals-with-and-without-diabetes",
+    "title": "EDA",
+    "section": "Number of individuals with and without diabetes",
+    "text": "Number of individuals with and without diabetes\n\n# Plot the distribution of diabetes status\nggplot(data, aes(x = Diabetes_binary, fill = Diabetes_binary)) +\n  geom_bar() +\n  labs(title = \"Diabetes Prevalence\", x = \"Diabetes Status\", y = \"Count\") +\n  scale_fill_manual(values = c(\"No\" = \"skyblue\", \"Yes\" = \"salmon\")) +\n  theme_minimal()"
+  },
+  {
+    "objectID": "EDA.html#age-distribution-for-diabetes-binary-in-dataset",
+    "href": "EDA.html#age-distribution-for-diabetes-binary-in-dataset",
+    "title": "EDA",
+    "section": "Age Distribution for Diabetes binary in dataset",
+    "text": "Age Distribution for Diabetes binary in dataset\n\n# Plot diabetes prevalence across age groups\nggplot(data, aes(x = Age, fill = Diabetes_binary)) +\n  geom_bar(position = \"fill\") +\n  labs(title = \"Diabetes Prevalence by Age Group\", x = \"Age Group\", y = \"Proportion\") +\n  scale_fill_manual(values = c(\"No\" = \"skyblue\", \"Yes\" = \"salmon\")) +\n  theme_minimal() +\n  coord_flip()"
+  },
+  {
+    "objectID": "EDA.html#bmi-distributions",
+    "href": "EDA.html#bmi-distributions",
+    "title": "EDA",
+    "section": "BMI Distributions",
+    "text": "BMI Distributions\n\n# Boxplot of BMI by diabetes status\nggplot(data, aes(x = Diabetes_binary, y = BMI, fill = Diabetes_binary)) +\n  geom_boxplot() +\n  labs(title = \"BMI by Diabetes Status\", x = \"Diabetes Status\", y = \"BMI\") +\n  scale_fill_manual(values = c(\"No\" = \"skyblue\", \"Yes\" = \"salmon\")) +\n  theme_minimal()"
+  },
+  {
+    "objectID": "EDA.html#physical-activity",
+    "href": "EDA.html#physical-activity",
+    "title": "EDA",
+    "section": "Physical activity",
+    "text": "Physical activity\n\n# Bar plot of physical activity vs. diabetes status\nggplot(data, aes(x = PhysActivity, fill = Diabetes_binary)) +\n  geom_bar(position = \"fill\") +\n  labs(title = \"Physical Activity vs. Diabetes Status\", x = \"Physical Activity\", y = \"Proportion\") +\n  scale_fill_manual(values = c(\"No\" = \"skyblue\", \"Yes\" = \"salmon\")) +\n  theme_minimal()"
+  },
+  {
+    "objectID": "EDA.html#smoking-status-and-diabetes",
+    "href": "EDA.html#smoking-status-and-diabetes",
+    "title": "EDA",
+    "section": "Smoking Status and Diabetes",
+    "text": "Smoking Status and Diabetes\n\n# Bar plot of smoking status vs. diabetes\nggplot(data, aes(x = Smoker, fill = Diabetes_binary)) +\n  geom_bar(position = \"fill\") +\n  labs(title = \"Smoking Status vs. Diabetes\", x = \"Smoking Status\", y = \"Proportion\") +\n  scale_fill_manual(values = c(\"No\" = \"skyblue\", \"Yes\" = \"salmon\")) +\n  theme_minimal()"
+  },
+  {
+    "objectID": "EDA.html#general-health-status-and-diabetes",
+    "href": "EDA.html#general-health-status-and-diabetes",
+    "title": "EDA",
+    "section": "General health status and Diabetes",
+    "text": "General health status and Diabetes\n\n# Proportion of diabetes across general health status\nggplot(data, aes(x = GenHlth, fill = Diabetes_binary)) +\n  geom_bar(position = \"fill\") +\n  labs(title = \"Diabetes Prevalence by General Health Status\", x = \"General Health\", y = \"Proportion\") +\n  scale_fill_manual(values = c(\"No\" = \"skyblue\", \"Yes\" = \"salmon\")) +\n  theme_minimal()"
+  },
+  {
+    "objectID": "EDA.html#sex-and-diabetes",
+    "href": "EDA.html#sex-and-diabetes",
+    "title": "EDA",
+    "section": "Sex and Diabetes",
+    "text": "Sex and Diabetes\n\n# Diabetes prevalence by sex\nggplot(data, aes(x = Sex, fill = Diabetes_binary)) +\n  geom_bar(position = \"fill\") +\n  labs(title = \"Diabetes Prevalence by Sex\", x = \"Sex\", y = \"Proportion\") +\n  scale_fill_manual(values = c(\"No\" = \"skyblue\", \"Yes\" = \"salmon\")) +\n  theme_minimal()"
+  },
+  {
+    "objectID": "EDA.html#income-and-diabetes",
+    "href": "EDA.html#income-and-diabetes",
+    "title": "EDA",
+    "section": "Income and Diabetes",
+    "text": "Income and Diabetes\n\n# Diabetes prevalence by income level\nggplot(data, aes(x = Income, fill = Diabetes_binary)) +\n  geom_bar(position = \"fill\") +\n  labs(title = \"Diabetes Prevalence by Income Level\", x = \"Income Level\", y = \"Proportion\") +\n  scale_fill_manual(values = c(\"No\" = \"skyblue\", \"Yes\" = \"salmon\")) +\n  theme_minimal() +\n  coord_flip()"
+  },
+  {
+    "objectID": "EDA.html#healthcare-access-and-diabetes",
+    "href": "EDA.html#healthcare-access-and-diabetes",
+    "title": "EDA",
+    "section": "Healthcare access and diabetes",
+    "text": "Healthcare access and diabetes\n\n# Diabetes prevalence by healthcare coverage\nggplot(data, aes(x = AnyHealthcare, fill = Diabetes_binary)) +\n  geom_bar(position = \"fill\") +\n  labs(title = \"Diabetes Prevalence by Healthcare Coverage\", x = \"Has Healthcare\", y = \"Proportion\") +\n  scale_fill_manual(values = c(\"No\" = \"skyblue\", \"Yes\" = \"salmon\")) +\n  theme_minimal()\n\n\n\n\n\n\n\n\n\n# Select numeric variables\nnumeric_vars &lt;- data %&gt;% select(BMI, MentHlth, PhysHlth)\n\n# Compute correlation matrix\ncor_matrix &lt;- cor(numeric_vars)\n\n# Visualize correlation matrix\nggcorrplot(cor_matrix, lab = TRUE)\n\n\n\n\n\n\n\n\nClick here for the Modeling Page"
+  }
+]
