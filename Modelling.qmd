@@ -1,5 +1,5 @@
 ---
-title: "Modelling"
+title: "Modelling And Performance Comparison"
 author: "Jay Thakur"
 format: html
 editor: visual
@@ -17,6 +17,8 @@ In this analysis, we aim to develop predictive models to classify individuals as
 Our objective is to select the best-performing model based on the **log-loss** metric, using 5-fold cross-validation on the training data. We will then compare the selected models on a test dataset to determine the overall winner.
 
 # Data Preparation
+
+We begin by loading the necessary libraries and importing the dataset using a relative path.
 
 ## Loading Libraries
 
@@ -68,6 +70,7 @@ data <- data %>%
 
 ## Data Splitting
 
+We will be splitting data in 70/30 proportion for training and testing.
 ```{r}
 set.seed(123)
 
@@ -78,6 +81,7 @@ test_data <- testing(data_split)
 ```
 
 ## Classification Tree Model
+I am using five predictors, BMI, Age, Physical activity, High BP and General Health.
 
 ```{r}
 tree_spec <- decision_tree(
@@ -93,6 +97,7 @@ tree_recipe <- recipe(Diabetes_binary ~ BMI + Age + HighBP + PhysActivity + GenH
 ```
 
 ### Cross validsation
+Using 5 fold cross validation.
 ```{r}
 tree_folds <- vfold_cv(train_data, v = 5, strata = Diabetes_binary)
 
@@ -116,6 +121,7 @@ tree_tuned <- tune_grid(
 ```
 
 ### Results
+Selecting best tree for dataset.
 ```{r}
 tree_results <- tree_tuned %>%
   collect_metrics()
@@ -127,7 +133,7 @@ best_tree
 ```
 
 ### Final Model
-
+Fitting complete training data on selected model.
 ```{r}
 final_tree_workflow <- tree_workflow %>%
   finalize_workflow(best_tree)
@@ -137,6 +143,7 @@ final_tree_fit <- final_tree_workflow %>%
 ```
 
 ### Tree Visualization
+Below is the tree:
 ```{r}
 # Plot the decision tree
 # str(final_tree_fit)
@@ -144,7 +151,7 @@ rpart.plot(extract_fit_parsnip(final_tree_fit)$fit)
 ```
 
 ## Random Forest Model
-
+On same training dataset, I will be using random forest model.
 ```{r}
 rf_spec <- rand_forest(
   mtry = tune(),
@@ -170,6 +177,7 @@ rf_tuned <- tune_grid(
 )
 ```
 
+Selecting best hyperparameter with least log loss value.
 ```{r}
 rf_results <- rf_tuned %>%
   collect_metrics()
@@ -182,7 +190,7 @@ best_rf
 ```
 
 ### Final RF model
-
+Fitting training data on best random forest model.
 ```{r}
 final_rf_workflow <- rf_workflow %>%
   finalize_workflow(best_rf)
@@ -194,6 +202,7 @@ final_rf_fit <- final_rf_workflow %>%
 ```
 
 ### Feature Importance
+Plotting variable importance graph.
 ```{r}
 rf_importance <- final_rf_fit %>%
   extract_fit_parsnip() %>%
@@ -204,6 +213,8 @@ rf_importance
 ```
 
 ## Model Evaluation on Test Data
+
+Below we will be calculating log loss for Diabetes=Yes probability on both Classification tree and Random forest model.
 
 ### Classification Tree
 
@@ -237,7 +248,7 @@ rf_log_loss
 ```
 
 ### Comparison
-
+Performance Comparison Between Classification tree and Random Forest Model:
 ```{r}
 model_performance <- tibble(
   Model = c("Classification Tree", "Random Forest"),

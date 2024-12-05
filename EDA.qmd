@@ -1,5 +1,5 @@
 ---
-title: "EDA"
+title: "Exploratory Data Analysis"
 author: "Jay Thakur"
 format: html
 editor: visual
@@ -45,6 +45,7 @@ We begin by loading the necessary libraries and importing the dataset using a re
 library(tidyverse)
 library(ggplot2)
 library(ggcorrplot)
+library(dplyr)
 ```
 
 
@@ -59,9 +60,10 @@ summary(data)
 
 # Coverting columns to Factor
 
+We are converting the variables from numeric to Factor
 ```{r}
 # Convert variables to factors with labels
-data <- data %>%
+data <- data |>
   mutate(
     Diabetes_binary = factor(Diabetes_binary, labels = c("No", "Yes")),
     HighBP = factor(HighBP, labels = c("No", "Yes")),
@@ -81,7 +83,7 @@ data <- data %>%
   )
 
 # Convert ordered variables to ordered factors
-data <- data %>%
+data <- data |>
   mutate(
     GenHlth = factor(GenHlth, ordered = TRUE, levels = c(1, 2, 3, 4, 5),
                      labels = c("Excellent", "Very Good", "Good", "Fair", "Poor")),
@@ -100,7 +102,7 @@ data <- data %>%
 ```
 
 # Checking for NA
-
+To verify missing values in dataset if any.
 ```{r}
 # Check for missing values in each column
 colSums(is.na(data))
@@ -117,6 +119,7 @@ ggplot(data, aes(x = Diabetes_binary, fill = Diabetes_binary)) +
   scale_fill_manual(values = c("No" = "skyblue", "Yes" = "salmon")) +
   theme_minimal()
 ```
+This plot shows the number of individuals without diabetes are more in the dataset.
 
 ## Age Distribution for Diabetes binary in dataset
 ```{r}
@@ -128,6 +131,7 @@ ggplot(data, aes(x = Age, fill = Diabetes_binary)) +
   theme_minimal() +
   coord_flip()
 ```
+The dataset includes a wide range of age groups, with higher counts of diabetes in old-aged categories, indicating age as a potential risk factor.
 
 ## BMI Distributions
 ```{r}
@@ -138,6 +142,7 @@ ggplot(data, aes(x = Diabetes_binary, y = BMI, fill = Diabetes_binary)) +
   scale_fill_manual(values = c("No" = "skyblue", "Yes" = "salmon")) +
   theme_minimal()
 ```
+The box plot shows individuals with diabetes tend to have higher BMI.
 
 ## Physical activity
 
@@ -149,6 +154,7 @@ ggplot(data, aes(x = PhysActivity, fill = Diabetes_binary)) +
   scale_fill_manual(values = c("No" = "skyblue", "Yes" = "salmon")) +
   theme_minimal()
 ```
+People with No physical activity have more chances of having diabetes.
 
 ## Smoking Status and Diabetes
 ```{r}
@@ -159,6 +165,7 @@ ggplot(data, aes(x = Smoker, fill = Diabetes_binary)) +
   scale_fill_manual(values = c("No" = "skyblue", "Yes" = "salmon")) +
   theme_minimal()
 ```
+There is a slightly higher proportion of diabetes among people who smoke.
 
 ## General health status and Diabetes
 ```{r}
@@ -169,6 +176,7 @@ ggplot(data, aes(x = GenHlth, fill = Diabetes_binary)) +
   scale_fill_manual(values = c("No" = "skyblue", "Yes" = "salmon")) +
   theme_minimal()
 ```
+The probability of diabetes is higher among individuals who has Poor general health.
 
 ## Sex and Diabetes
 ```{r}
@@ -179,6 +187,7 @@ ggplot(data, aes(x = Sex, fill = Diabetes_binary)) +
   scale_fill_manual(values = c("No" = "skyblue", "Yes" = "salmon")) +
   theme_minimal()
 ```
+There is a slightly higher probability of diabetes among males compared to females.
 
 ## Income and Diabetes
 
@@ -191,6 +200,7 @@ ggplot(data, aes(x = Income, fill = Diabetes_binary)) +
   theme_minimal() +
   coord_flip()
 ```
+Individuals with lower income levels tend to have a higher report of diabetes.
 
 ## Healthcare access and diabetes
 ```{r}
@@ -202,10 +212,11 @@ ggplot(data, aes(x = AnyHealthcare, fill = Diabetes_binary)) +
   theme_minimal()
 
 ```
+No considerable relation, except for slight more number with people having healthcare.
 
 ```{r}
 # Select numeric variables
-numeric_vars <- data %>% select(BMI, MentHlth, PhysHlth)
+numeric_vars <- data |> select(BMI, MentHlth, PhysHlth)
 
 # Compute correlation matrix
 cor_matrix <- cor(numeric_vars)
@@ -213,5 +224,6 @@ cor_matrix <- cor(numeric_vars)
 # Visualize correlation matrix
 ggcorrplot(cor_matrix, lab = TRUE)
 ```
+Above shows correlation between 3 numeric attributes.
 
 [Click here for the Modeling Page](Modelling.html)
